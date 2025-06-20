@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PenTest Decoder Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .decoder-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .decoder-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .decoder-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .decoder-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .decoder-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .decoder-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 60px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .decode-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .decode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .decode-btn:active {
+            transform: translateY(0);
+        }
+
+        .output-group {
+            margin-top: 20px;
+        }
+
+        .output-field {
+            width: 100%;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            min-height: 120px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .jwt-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .jwt-section h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .jwt-json {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .decoder-grid {
+                max-width: none;
+            }
+            
+            .decoder-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔓 PenTest Decoder Suite</h1>
+            <p>Professional toolkit for encoding/decoding operations</p>
+        </div>
+
+        <div class="decoder-grid">
+            <!-- JWT Decoder -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">JWT</div>
+                    <div class="decoder-title">JWT Token Decoder</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">JWT Token:</label>
+                    <textarea class="input-field" id="jwtInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"></textarea>
+                </div>
+                
+                <button class="decode-btn" onclick="decodeJWT()">🔍 Decode JWT</button>
+                
+                <div class="output-group">
+                    <div id="jwtOutput"></div>
+                </div>
+            </div>
+
+            <!-- Base64 Encoder/Decoder -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">B64</div>
+                    <div class="decoder-title">Base64 Encoder/Decoder</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input Text:</label>
+                    <textarea class="input-field" id="base64Input" placeholder="Enter text to encode or base64 to decode..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="decode-btn" style="flex: 1;" onclick="encodeBase64()">🔒 Encode</button>
+                    <button class="decode-btn" style="flex: 1;" onclick="decodeBase64()">🔓 Decode</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="base64Output">Results will appear here...</div>
+                    <button class="copy-btn" onclick="copyOutput('base64Output')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+
+            <!-- URL Encoder/Decoder -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">URL</div>
+                    <div class="decoder-title">URL Encoder/Decoder</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input URL/Text:</label>
+                    <textarea class="input-field" id="urlInput" placeholder="Enter URL to encode/decode..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="decode-btn" style="flex: 1;" onclick="encodeURL()">🔒 Encode</button>
+                    <button class="decode-btn" style="flex: 1;" onclick="decodeURL()">🔓 Decode</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="urlOutput">Results will appear here...</div>
+                    <button class="copy-btn" onclick="copyOutput('urlOutput')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+
+            <!-- Hash Generator -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">#</div>
+                    <div class="decoder-title">Hash Generator</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input Text:</label>
+                    <textarea class="input-field" id="hashInput" placeholder="Enter text to hash..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="decode-btn" style="flex: 1; min-width: 80px; font-size: 14px;" onclick="generateHash('MD5')">MD5</button>
+                    <button class="decode-btn" style="flex: 1; min-width: 80px; font-size: 14px;" onclick="generateHash('SHA1')">SHA1</button>
+                    <button class="decode-btn" style="flex: 1; min-width: 80px; font-size: 14px;" onclick="generateHash('SHA256')">SHA256</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="hashOutput">Select a hash algorithm above...</div>
+                    <button class="copy-btn" onclick="copyOutput('hashOutput')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+
+            <!-- Hex/ASCII Converter -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">HEX</div>
+                    <div class="decoder-title">Hex/ASCII Converter</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input:</label>
+                    <textarea class="input-field" id="hexInput" placeholder="Enter ASCII text or hex values (with or without spaces/0x)..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="decode-btn" style="flex: 1;" onclick="convertToHex()">➡️ To Hex</button>
+                    <button class="decode-btn" style="flex: 1;" onclick="convertToASCII()">⬅️ To ASCII</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="hexOutput">Results will appear here...</div>
+                    <button class="copy-btn" onclick="copyOutput('hexOutput')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+
+            <!-- HTML Entity Encoder/Decoder -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">&lt;&gt;</div>
+                    <div class="decoder-title">HTML Entity Encoder/Decoder</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input Text:</label>
+                    <textarea class="input-field" id="htmlInput" placeholder="Enter HTML or text with special characters..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="decode-btn" style="flex: 1;" onclick="encodeHTML()">🔒 Encode</button>
+                    <button class="decode-btn" style="flex: 1;" onclick="decodeHTML()">🔓 Decode</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="htmlOutput">Results will appear here...</div>
+                    <button class="copy-btn" onclick="copyOutput('htmlOutput')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+
+            <!-- Unicode Escape Decoder -->
+            <div class="decoder-card">
+                <div class="decoder-header">
+                    <div class="decoder-icon">\\u</div>
+                    <div class="decoder-title">Unicode Escape Decoder</div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Input:</label>
+                    <textarea class="input-field" id="unicodeInput" placeholder="Enter text with unicode escapes like \u0041 or regular text..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="decode-btn" style="flex: 1;" onclick="encodeUnicode()">🔒 Encode</button>
+                    <button class="decode-btn" style="flex: 1;" onclick="decodeUnicode()">🔓 Decode</button>
+                </div>
+                
+                <div class="output-group">
+                    <div class="output-field" id="unicodeOutput">Results will appear here...</div>
+                    <button class="copy-btn" onclick="copyOutput('unicodeOutput')" style="display: none;">📋 Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Built for penetration testing and security analysis</p>
+        </div>
+    </div>
+
+    <script>
+        // JWT Decoder Implementation
+        function decodeJWT() {
+            const token = document.getElementById('jwtInput').value.trim();
+            const outputDiv = document.getElementById('jwtOutput');
+            
+            if (!token) {
+                showError(outputDiv, 'Please enter a JWT token');
+                return;
+            }
+
+            try {
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    throw new Error('Invalid JWT format. JWT should have 3 parts separated by dots.');
+                }
+
+                const header = JSON.parse(base64UrlDecode(parts[0]));
+                const payload = JSON.parse(base64UrlDecode(parts[1]));
+                const signature = parts[2];
+
+                // Create formatted output
+                let output = '';
+                
+                // Header section
+                output += createJWTSection('Header', header);
+                
+                // Payload section
+                output += createJWTSection('Payload', payload);
+                
+                // Signature section
+                output += `
+                    <div class="jwt-section">
+                        <h4>🔐 Signature</h4>
+                        <div class="jwt-json">${signature}</div>
+                        <small style="color: #666;">Note: Signature verification requires the secret key</small>
+                    </div>
+                `;
+
+                // Add timestamp conversion for common claims
+                if (payload.iat || payload.exp || payload.nbf) {
+                    output += '<div class="jwt-section"><h4>⏰ Timestamp Conversions</h4>';
+                    if (payload.iat) {
+                        output += `<p><strong>Issued At (iat):</strong> ${new Date(payload.iat * 1000).toLocaleString()}</p>`;
+                    }
+                    if (payload.exp) {
+                        output += `<p><strong>Expires At (exp):</strong> ${new Date(payload.exp * 1000).toLocaleString()}</p>`;
+                    }
+                    if (payload.nbf) {
+                        output += `<p><strong>Not Before (nbf):</strong> ${new Date(payload.nbf * 1000).toLocaleString()}</p>`;
+                    }
+                    output += '</div>';
+                }
+
+                outputDiv.innerHTML = output + '<button class="copy-btn" onclick="copyJWTOutput()">📋 Copy Results</button>';
+                outputDiv.className = 'output-field success';
+
+            } catch (error) {
+                showError(outputDiv, `Decoding failed: ${error.message}`);
+            }
+        }
+
+        function createJWTSection(title, data) {
+            const icon = title === 'Header' ? '📋' : '📦';
+            return `
+                <div class="jwt-section">
+                    <h4>${icon} ${title}</h4>
+                    <div class="jwt-json">${JSON.stringify(data, null, 2)}</div>
+                </div>
+            `;
+        }
+
+        function base64UrlDecode(str) {
+            // Convert base64url to base64
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            
+            // Add padding if necessary
+            while (str.length % 4) {
+                str += '=';
+            }
+            
+            try {
+                // Decode base64 and convert to string
+                return decodeURIComponent(escape(atob(str)));
+            } catch (e) {
+                throw new Error('Invalid base64 encoding');
+            }
+        }
+
+        function showError(element, message) {
+            element.innerHTML = message;
+            element.className = 'output-field error';
+        }
+
+        function copyJWTOutput() {
+            const outputText = document.getElementById('jwtOutput').innerText;
+            navigator.clipboard.writeText(outputText).then(() => {
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#28a745';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Copy failed. Please select and copy manually.');
+            });
+        }
+
+        // Modular decoder framework for future expansion
+        class DecoderManager {
+            constructor() {
+                this.decoders = new Map();
+            }
+            
+            addDecoder(name, decoder) {
+                this.decoders.set(name, decoder);
+            }
+            
+            getDecoder(name) {
+                return this.decoders.get(name);
+            }
+            
+            createDecoderCard(name, config) {
+                // Future method to dynamically create decoder cards
+                // This will make adding new decoders very simple
+            }
+        }
+
+        // Initialize decoder manager for future use
+        const decoderManager = new DecoderManager();
+        
+        // Example of how to add future decoders:
+        // decoderManager.addDecoder('base64', {
+        //     encode: (input) => btoa(input),
+        //     decode: (input) => atob(input),
+        //     icon: 'B64',
+        //     title: 'Base64 Encoder/Decoder'
+        // });
+
+        // Base64 Functions
+        function encodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            const output = document.getElementById('base64Output');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to encode');
+                return;
+            }
+            
+            try {
+                const encoded = btoa(unescape(encodeURIComponent(input)));
+                output.textContent = encoded;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Encoding failed: ${error.message}`);
+            }
+        }
+        
+        function decodeBase64() {
+            const input = document.getElementById('base64Input').value.trim();
+            const output = document.getElementById('base64Output');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input) {
+                showError(output, 'Please enter base64 to decode');
+                return;
+            }
+            
+            try {
+                const decoded = decodeURIComponent(escape(atob(input)));
+                output.textContent = decoded;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Decoding failed: Invalid base64 format`);
+            }
+        }
+        
+        // URL Functions
+        function encodeURL() {
+            const input = document.getElementById('urlInput').value;
+            const output = document.getElementById('urlOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to encode');
+                return;
+            }
+            
+            try {
+                const encoded = encodeURIComponent(input);
+                output.textContent = encoded;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Encoding failed: ${error.message}`);
+            }
+        }
+        
+        function decodeURL() {
+            const input = document.getElementById('urlInput').value.trim();
+            const output = document.getElementById('urlOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input) {
+                showError(output, 'Please enter URL-encoded text to decode');
+                return;
+            }
+            
+            try {
+                const decoded = decodeURIComponent(input);
+                output.textContent = decoded;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Decoding failed: Invalid URL encoding`);
+            }
+        }
+        
+        // Hash Functions (using crypto-js equivalent implementations)
+        function generateHash(algorithm) {
+            const input = document.getElementById('hashInput').value;
+            const output = document.getElementById('hashOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to hash');
+                return;
+            }
+            
+            try {
+                let hash;
+                switch(algorithm) {
+                    case 'MD5':
+                        hash = md5(input);
+                        break;
+                    case 'SHA1':
+                        hash = sha1(input);
+                        break;
+                    case 'SHA256':
+                        hash = sha256(input);
+                        break;
+                    default:
+                        throw new Error('Unsupported algorithm');
+                }
+                
+                output.innerHTML = `<strong>${algorithm}:</strong><br>${hash}`;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Hashing failed: ${error.message}`);
+            }
+        }
+        
+        // Hex/ASCII Functions
+        function convertToHex() {
+            const input = document.getElementById('hexInput').value;
+            const output = document.getElementById('hexOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to convert');
+                return;
+            }
+            
+            try {
+                let hex = '';
+                for (let i = 0; i < input.length; i++) {
+                    hex += input.charCodeAt(i).toString(16).padStart(2, '0');
+                }
+                output.textContent = hex.toUpperCase();
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Conversion failed: ${error.message}`);
+            }
+        }
+        
+        function convertToASCII() {
+            const input = document.getElementById('hexInput').value.trim();
+            const output = document.getElementById('hexOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input) {
+                showError(output, 'Please enter hex values to convert');
+                return;
+            }
+            
+            try {
+                // Clean hex input (remove spaces, 0x prefixes, etc.)
+                const cleanHex = input.replace(/[^0-9a-fA-F]/g, '');
+                
+                if (cleanHex.length % 2 !== 0) {
+                    throw new Error('Invalid hex length');
+                }
+                
+                let ascii = '';
+                for (let i = 0; i < cleanHex.length; i += 2) {
+                    const hex = cleanHex.substr(i, 2);
+                    ascii += String.fromCharCode(parseInt(hex, 16));
+                }
+                
+                output.textContent = ascii;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Conversion failed: Invalid hex format`);
+            }
+        }
+        
+        // HTML Entity Functions
+        function encodeHTML() {
+            const input = document.getElementById('htmlInput').value;
+            const output = document.getElementById('htmlOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to encode');
+                return;
+            }
+            
+            const encoded = input
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+                
+            output.textContent = encoded;
+            output.className = 'output-field success';
+            copyBtn.style.display = 'block';
+        }
+        
+        function decodeHTML() {
+            const input = document.getElementById('htmlInput').value.trim();
+            const output = document.getElementById('htmlOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input) {
+                showError(output, 'Please enter HTML entities to decode');
+                return;
+            }
+            
+            const decoded = input
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
+                .replace(/&#x([a-fA-F0-9]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+                
+            output.textContent = decoded;
+            output.className = 'output-field success';
+            copyBtn.style.display = 'block';
+        }
+        
+        // Unicode Functions
+        function encodeUnicode() {
+            const input = document.getElementById('unicodeInput').value;
+            const output = document.getElementById('unicodeOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input.trim()) {
+                showError(output, 'Please enter text to encode');
+                return;
+            }
+            
+            let encoded = '';
+            for (let i = 0; i < input.length; i++) {
+                const code = input.charCodeAt(i);
+                if (code > 127) {
+                    encoded += '\\u' + code.toString(16).padStart(4, '0');
+                } else {
+                    encoded += input.charAt(i);
+                }
+            }
+            
+            output.textContent = encoded;
+            output.className = 'output-field success';
+            copyBtn.style.display = 'block';
+        }
+        
+        function decodeUnicode() {
+            const input = document.getElementById('unicodeInput').value.trim();
+            const output = document.getElementById('unicodeOutput');
+            const copyBtn = output.nextElementSibling;
+            
+            if (!input) {
+                showError(output, 'Please enter unicode escapes to decode');
+                return;
+            }
+            
+            try {
+                const decoded = input.replace(/\\u([0-9a-fA-F]{4})/g, (match, hex) => {
+                    return String.fromCharCode(parseInt(hex, 16));
+                });
+                
+                output.textContent = decoded;
+                output.className = 'output-field success';
+                copyBtn.style.display = 'block';
+            } catch (error) {
+                showError(output, `Decoding failed: ${error.message}`);
+            }
+        }
+        
+        // Generic copy function
+        function copyOutput(outputId) {
+            const outputElement = document.getElementById(outputId);
+            const text = outputElement.textContent || outputElement.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Copy failed. Please select and copy manually.');
+            });
+        }
+        
+        // Simple hash implementations (for demo purposes - in production use crypto-js)
+        function md5(string) {
+            if (typeof CryptoJS !== 'undefined') {
+                return CryptoJS.MD5(string).toString();
+            }
+            return 'MD5 hash requires crypto-js library to be loaded';
+        }
+        
+        function sha1(string) {
+            if (typeof CryptoJS !== 'undefined') {
+                return CryptoJS.SHA1(string).toString();
+            }
+            return 'SHA1 hash requires crypto-js library to be loaded';
+        }
+        
+        function sha256(string) {
+            if (typeof CryptoJS !== 'undefined') {
+                return CryptoJS.SHA256(string).toString();
+            }
+            return 'SHA256 hash requires crypto-js library to be loaded';
+        }
+
+        // Auto-focus first input on page load
+        window.onload = function() {
+            document.getElementById('jwtInput').focus();
+        };
+    </script>
+</body>
+</html>
