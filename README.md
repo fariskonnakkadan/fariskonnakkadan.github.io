@@ -23,7 +23,7 @@ Works entirely client-side. No data is sent to any server.
 
 Explore my curated knowledge base and tooling reference:
 
-👉 **[Fari’s Notes on GitBook](https://faris.gitbook.io)**
+👉 **[Fari’s Notes on GitBook](https://faris.gitbook.io)** (Most of it generated using Agentic AI)
 
 Covers:
 
