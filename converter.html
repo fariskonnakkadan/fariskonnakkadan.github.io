@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to MP3 Converter - Offline (True MP3)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .tech-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: rgba(118, 75, 162, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: rgba(118, 75, 162, 0.15);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .status.success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .status.error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .status.info {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196f3;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .video-preview {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .video-preview video {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-info {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .file-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .file-details {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .bitrate-selector {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .bitrate-selector label {
+            display: inline-block;
+            margin: 0 10px;
+            color: #333;
+        }
+
+        .bitrate-selector select {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #333;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Loading FFmpeg...</h3>
+            <p>Downloading conversion engine (~30MB)<br>This may take a moment on first load</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>🎵 Video to MP3</h1>
+        <p class="subtitle">Convert video files to true MP3 audio - completely offline!</p>
+        
+        <div class="tech-info">
+            <strong>🔧 Powered by FFmpeg.js</strong><br>
+            True MP3 conversion using the industry-standard FFmpeg library compiled to WebAssembly
+        </div>
+        
+        <div class="upload-area" onclick="document.getElementById('videoInput').click()">
+            <div class="upload-icon">📹</div>
+            <div class="upload-text">Click to select video file</div>
+            <div class="upload-subtext">or drag and drop here</div>
+            <div class="upload-subtext">Supports MP4, AVI, MOV, WebM, MKV and more</div>
+        </div>
+        
+        <input type="file" id="videoInput" class="file-input" accept="video/*">
+        
+        <div class="file-info" id="fileInfo">
+            <h3>Selected File:</h3>
+            <div class="file-details" id="fileDetails"></div>
+        </div>
+        
+        <div class="bitrate-selector" id="bitrateSelector">
+            <label for="bitrate">MP3 Quality:</label>
+            <select id="bitrate">
+                <option value="128k">128 kbps (Standard)</option>
+                <option value="192k" selected>192 kbps (High Quality)</option>
+                <option value="256k">256 kbps (Very High Quality)</option>
+                <option value="320k">320 kbps (Maximum Quality)</option>
+            </select>
+        </div>
+        
+        <div class="video-preview" id="videoPreview">
+            <video id="videoElement" controls></video>
+        </div>
+        
+        <button class="btn" id="convertBtn" onclick="convertToMp3()" disabled>
+            🔄 Convert to MP3
+        </button>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText" style="margin-top: 10px; color: #666;"></div>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <a class="btn" id="downloadBtn" style="display: none;">
+            💾 Download MP3
+        </a>
+    </div>
+
+    <!-- FFmpeg.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.10/umd/ffmpeg.min.js"></script>
+
+    <script>
+        let selectedFile = null;
+        let ffmpeg = null;
+        let isFFmpegLoaded = false;
+
+        // Initialize FFmpeg
+        async function initFFmpeg() {
+            if (isFFmpegLoaded) return;
+
+            try {
+                showLoadingOverlay();
+                showStatus('Loading FFmpeg conversion engine...', 'info');
+
+                const { FFmpeg } = FFmpegWASM;
+                ffmpeg = new FFmpeg();
+
+                // Load FFmpeg
+                await ffmpeg.load({
+                    coreURL: 'https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.10/umd/ffmpeg-core.js',
+                    wasmURL: 'https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.10/umd/ffmpeg-core.wasm'
+                });
+
+                isFFmpegLoaded = true;
+                hideLoadingOverlay();
+                showStatus('FFmpeg loaded successfully! Ready to convert.', 'success');
+                
+            } catch (error) {
+                console.error('FFmpeg loading error:', error);
+                hideLoadingOverlay();
+                showStatus('Failed to load FFmpeg. Please refresh and try again.', 'error');
+            }
+        }
+
+        // Load FFmpeg on page load
+        window.addEventListener('load', initFFmpeg);
+
+        // File input handling
+        document.getElementById('videoInput').addEventListener('change', handleFileSelect);
+
+        // Drag and drop handling
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('video/')) {
+                showStatus('Please select a valid video file.', 'error');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Show file info
+            const fileInfo = document.getElementById('fileInfo');
+            const fileDetails = document.getElementById('fileDetails');
+            fileDetails.innerHTML = `
+                <strong>Name:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                <strong>Type:</strong> ${file.type}
+            `;
+            fileInfo.style.display = 'block';
+            
+            // Show bitrate selector
+            document.getElementById('bitrateSelector').style.display = 'block';
+            
+            // Show video preview
+            const videoPreview = document.getElementById('videoPreview');
+            const videoElement = document.getElementById('videoElement');
+            const url = URL.createObjectURL(file);
+            videoElement.src = url;
+            videoPreview.style.display = 'block';
+            
+            // Enable convert button if FFmpeg is loaded
+            document.getElementById('convertBtn').disabled = !isFFmpegLoaded;
+            
+            hideStatus();
+        }
+
+        async function convertToMp3() {
+            if (!selectedFile) {
+                showStatus('Please select a video file first.', 'error');
+                return;
+            }
+
+            if (!isFFmpegLoaded) {
+                showStatus('FFmpeg is still loading. Please wait...', 'error');
+                return;
+            }
+
+            try {
+                const bitrate = document.getElementById('bitrate').value;
+                
+                // Reset previous conversion
+                document.getElementById('downloadBtn').style.display = 'none';
+                showProgress();
+                showStatus('Converting to MP3...', 'info');
+                updateProgressText('Preparing conversion...');
+                
+                // Convert file to Uint8Array
+                const fileData = await selectedFile.arrayBuffer();
+                const inputFileName = 'input.' + selectedFile.name.split('.').pop();
+                const outputFileName = selectedFile.name.replace(/\.[^/.]+$/, '') + '.mp3';
+                
+                // Write input file to FFmpeg filesystem
+                await ffmpeg.writeFile(inputFileName, new Uint8Array(fileData));
+                updateProgressText('Processing audio...');
+                
+                // Set up progress monitoring
+                ffmpeg.on('progress', ({ progress }) => {
+                    const percentage = Math.round(progress * 100);
+                    updateProgress(percentage);
+                    updateProgressText(`Converting: ${percentage}%`);
+                });
+                
+                // Run FFmpeg conversion
+                await ffmpeg.exec([
+                    '-i', inputFileName,
+                    '-vn', // No video
+                    '-acodec', 'libmp3lame', // MP3 encoder
+                    '-ab', bitrate, // Bitrate
+                    '-ar', '44100', // Sample rate
+                    '-ac', '2', // Stereo
+                    outputFileName
+                ]);
+                
+                // Read the output file
+                const data = await ffmpeg.readFile(outputFileName);
+                
+                // Create download link
+                const blob = new Blob([data.buffer], { type: 'audio/mpeg' });
+                const url = URL.createObjectURL(blob);
+                
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.href = url;
+                downloadBtn.download = outputFileName;
+                downloadBtn.style.display = 'inline-block';
+                
+                // Clean up FFmpeg filesystem
+                await ffmpeg.deleteFile(inputFileName);
+                await ffmpeg.deleteFile(outputFileName);
+                
+                updateProgress(100);
+                updateProgressText('Conversion completed!');
+                showStatus(`Successfully converted to MP3 (${bitrate})!`, 'success');
+                
+            } catch (error) {
+                console.error('Conversion error:', error);
+                showStatus('Error during conversion: ' + error.message, 'error');
+                hideProgress();
+            }
+        }
+
+        function showLoadingOverlay() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoadingOverlay() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+            updateProgress(0);
+        }
+
+        function hideProgress() {
+            document.getElementById('progressContainer').style.display = 'none';
+        }
+
+        function updateProgress(percentage) {
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function updateProgressText(text) {
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        // Handle browser compatibility
+        if (typeof FFmpegWASM === 'undefined') {
+            showStatus('FFmpeg library failed to load. Please check your internet connection and refresh.', 'error');
+        }
+    </script>
+</body>
+</html>
