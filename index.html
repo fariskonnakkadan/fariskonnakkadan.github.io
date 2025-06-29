@@ -199,7 +199,7 @@
             <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
                 <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
                     <p class="text-blue-300 font-semibold text-xl">May 2022 - Present</p>
-                    <p class="text-gray-400">3 yrs 2 mos</p>
+                    <p class="text-gray-400" id="ibm-experience"></p> <!-- Dynamic content will go here -->
                 </div>
                 <div class="md:w-3/4">
                     <h4 class="text-2xl font-semibold text-white">Cloud - Red Team Pentester</h4>
@@ -415,8 +415,8 @@
 
     <!-- Footer Section -->
     <footer class="bg-gray-900 text-gray-400 p-6 text-center mt-16 rounded-t-lg shadow-inner">
-        <p class="text-lg">&copy; 2025 Faris Mohammed. All rights reserved.</p>
-        <p class="text-md">Generated using AI.</p>
+        <p class="text-lg">&copy; 2024 Faris Mohammed. All rights reserved.</p>
+        <p class="text-md">Built with passion and cybersecurity in mind.</p>
     </footer>
 
     <!-- JavaScript for Starfield and Scroll Reveal Animations -->
@@ -504,10 +504,51 @@
             observer.observe(el);
         });
 
+        // Function to calculate and display dynamic experience
+        function calculateExperience() {
+            const startDate = new Date('2022-05-01'); // Start date: May 2022
+            const currentDate = new Date(); // Current date
+
+            let years = currentDate.getFullYear() - startDate.getFullYear();
+            let months = currentDate.getMonth() - startDate.getMonth();
+
+            // Adjust years and months if current month is before start month
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Construct the experience string
+            let experienceString = "";
+            if (years > 0) {
+                experienceString += `${years} yr${years !== 1 ? 's' : ''}`;
+            }
+            if (months > 0) {
+                if (years > 0) {
+                    experienceString += " "; // Add space if both years and months exist
+                }
+                experienceString += `${months} mo${months !== 1 ? 's' : ''}`;
+            }
+
+            // If less than a month, just say "< 1 mo" or "0 mos"
+            if (years === 0 && months === 0) {
+                experienceString = "< 1 mo";
+            } else if (years === 0 && months > 0 && months < 1) { // For cases like 0 months but still present
+                experienceString = "0 mos"; // Or "Less than 1 month" if preferred
+            }
+
+
+            const ibmExperienceElement = document.getElementById('ibm-experience');
+            if (ibmExperienceElement) {
+                ibmExperienceElement.textContent = experienceString;
+            }
+        }
+
         // Event Listeners: Ensure canvas is sized correctly and animations start after page load
         window.addEventListener('load', () => {
             resizeCanvas(); // Set initial canvas size and populate stars
             animateStars(); // Start the starfield animation loop
+            calculateExperience(); // Calculate and display experience
         });
 
         // Adjust canvas size and stars on window resize to maintain responsiveness
