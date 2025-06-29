@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faris Mohammed | Offensive Security Engineer</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font to the entire body */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom styles for the starfield canvas background */
+        .starfield-canvas {
+            position: fixed; /* Use fixed to keep it in the background while scrolling */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Ensure it stays behind other content */
+        }
+
+        /* Subtle hover animation for the rocket SVG */
+        .rocket-svg {
+            transition: transform 0.5s ease-in-out;
+        }
+        .rocket-svg:hover {
+            transform: translateY(-10px) scale(1.05); /* Lifts and slightly scales on hover */
+        }
+
+        /* Styles for scroll reveal animation */
+        .scroll-reveal {
+            opacity: 0; /* Initially hidden */
+            transform: translateY(50px); /* Starts slightly below its final position */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Smooth transition */
+        }
+        .scroll-reveal.active {
+            opacity: 1; /* Becomes visible */
+            transform: translateY(0); /* Moves to its final position */
+        }
+
+        /* Custom scrollbar styles for a more integrated look */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* Darker track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1; /* Purple-blue thumb */
+            border-radius: 10px;
+            border: 3px solid #2d3748; /* Border matching track for smooth appearance */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5; /* Slightly darker purple on hover */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-200 min-h-screen">
+
+    <!-- Starfield Canvas for animated background -->
+    <canvas id="starfield" class="starfield-canvas"></canvas>
+
+    <!-- Header Section: Contains name and navigation -->
+    <header class="p-6 flex flex-col md:flex-row justify-between items-center z-10 relative bg-gray-900 bg-opacity-80 shadow-lg rounded-b-xl">
+        <!-- Portfolio Title with gradient text -->
+        <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4 md:mb-0">Faris Mohammed</h1>
+        <!-- Navigation Menu -->
+        <nav>
+            <ul class="flex flex-wrap justify-center space-x-4 md:space-x-6">
+                <li><a href="#about" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">About</a></li>
+                <li><a href="#skills" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">Skills</a></li>
+                <li><a href="#experience" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">Experience</a></li>
+                <li><a href="#education" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">Education</a></li>
+                <li><a href="#certs" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">Certifications</a></li>
+                <li><a href="#awards" class="text-lg hover:text-blue-400 transition-colors duration-300 px-3 py-1 rounded-md hover:bg-gray-700">Awards</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section: Main introduction and key highlights -->
+    <section id="hero" class="relative flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 py-16">
+        <!-- Content for hero section with scroll reveal animation -->
+        <div class="space-y-4 scroll-reveal">
+            <h2 class="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 leading-tight">Offensive Security Engineer</h2>
+            <p class="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto">
+                Specializing in Penetration Testing for Web, API, Network, Android, iOS, and Thickclient.
+            </p>
+            <div class="mt-8 flex justify-center space-x-6">
+                <!-- Inline SVG Rocket Icon with subtle animation -->
+                <svg class="rocket-svg w-20 h-20 sm:w-24 sm:h-24 text-blue-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0c-1.104 0-2 .896-2 2v10c0 1.104.896 2 2 2s2-.896 2-2V2c0-1.104-.896-2-2-2zM12 16c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zM8 20c0-.552.448-1 1-1h6c.552 0 1 .448 1 1s-.448 1-1 1H9c-.552-0-1-.448-1-1zM5 13c0-2.21 1.79-4 4-4h6c2.21 0 4 1.79 4 4v3H5v-3z"/>
+                </svg>
+            </div>
+            <p class="text-lg sm:text-xl text-gray-400 mt-4">
+                IBM Public Cloud | OSCP | OffSec | Web Security | API Security | Mobile Security
+            </p>
+        </div>
+    </section>
+
+    <!-- About Section: Detailed professional overview -->
+    <section id="about" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">About Me</h3>
+        <div class="max-w-4xl mx-auto text-gray-300 leading-relaxed text-base sm:text-lg space-y-4">
+            <p>I'm a graduate in Computer Science and Engineering from Cochin University of Science and Technology. I also hold a Diploma in Computer Engineering. My expertise lies in Penetration Testing for Web, API, Network, Android, iOS and Thickclient, which has been developed through hands-on project insights, extensive experience, and dedicated research. Additionally, it has been enhanced by various certificate courses, cybersec community support, conferences, blogs, and certifications such as OSCP, CEH and CRTP.</p>
+            <p>In my professional tenure since 2018, I have undertaken a variety of roles. Presently at IBM ISL, I serve as a Pentester within the IBM Cloud Red Team, concentrating on offensive security assessments. Previously, I focused on reverse engineering Android applications at Cognizant to identify malicious apps. During this time, I worked closely with the Google Play Protect team.</p>
+            <p>Before this, while working at ValueMentor, I started as a Security Analyst specialising in offensive security, steadily advancing to a Team Lead position. This role provided me with exposure to cybersecurity challenges on a global scale through consulting engagements.</p>
+            <p>Additionally, I actively participate in training initiatives for faculty and students, as well as competing in various Capture The Flag competitions.</p>
+            <p>My professional journey commenced at Tata Communications, where I served as a Submarine Cable Landing Station Engineer. This role provided invaluable insights into telecommunications infrastructure, contributing significantly to the enhancement of my cybersecurity skill set.</p>
+            <p>As an Offensive Security Engineer, I thrive on unraveling the inner workings of systems, probing for vulnerabilities, and dissecting them to uncover their weak spots.</p>
+        </div>
+    </section>
+
+    <!-- Skills Section: Categorized display of skills -->
+    <section id="skills" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Skills & Expertise</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Top Skills Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-purple-300 mb-4">Top Skills</h4>
+                <ul class="list-disc list-inside text-gray-300 text-lg space-y-2">
+                    <li>Python (Programming Language)</li>
+                    <li>Vulnerability Assessment</li>
+                    <li>Penetration Testing</li>
+                    <li>Burp Suite</li>
+                    <li>Kali Linux</li>
+                </ul>
+            </div>
+            <!-- Core Expertise Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-purple-300 mb-4">Core Expertise</h4>
+                <ul class="list-disc list-inside text-gray-300 text-lg space-y-2">
+                    <li>IBM Public Cloud Security</li>
+                    <li>Web Security</li>
+                    <li>API Security</li>
+                    <li>Internal & External Network Security</li>
+                    <li>Mobile Security (Android & iOS)</li>
+                    <li>Android Reverse Engineering & Malware Analysis</li>
+                    <li>Thick Client Security</li>
+                </ul>
+            </div>
+            <!-- Certifications & Tools Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-purple-300 mb-4">Certifications & Tools</h4>
+                <ul class="list-disc list-inside text-gray-300 text-lg space-y-2">
+                    <li>OSCP (OffSec Certified Professional)</li>
+                    <li>CEH (Certified Ethical Hacker)</li>
+                    <li>CRTP</li>
+                    <li>Jadx, jadx-gui, apktool, dex2jar</li>
+                    <li>Ghidra</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section: Chronological work history -->
+    <section id="experience" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Experience</h3>
+        <div class="space-y-12">
+            <!-- IBM Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">May 2022 - Present</p>
+                    <p class="text-gray-400">3 yrs 2 mos</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Cloud - Red Team Pentester</h4>
+                    <p class="text-purple-300 text-lg">IBM · Full-time</p>
+                    <p class="text-gray-400 mb-4">Bengaluru, Karnataka, India</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Penetration testing on web, API, network, and other infrastructure of various IBM cloud products.</li>
+                        <li>Acquired knowledge of IBM Undercloud architecture and multiple cloud services offered to IBM Cloud users.</li>
+                        <li>Leveraged a broad range of security expertise including web application security, RESTful API security, network security, operating system security, and cloud services security to proactively identify and mitigate potential vulnerabilities and threats.</li>
+                        <li>Acquired knowledge in Kubernetes and pods security testing and its implementation.</li>
+                        <li>Analyzed complex systems and applications using threat modeling techniques to identify possible security threats and vulnerabilities.</li>
+                        <li>Created several Python and Bash scripts to automate recurring tasks throughout penetration testing projects.</li>
+                        <li>Participated in multiple CTF competitions, gaining a thorough understanding of various security concepts and techniques, and utilizing them to test for security vulnerabilities and misconfigurations.</li>
+                        <li>Conducted segmentation testing to ensure that network segments are appropriately isolated and safeguarded.</li>
+                        <li>Generated extensive vulnerability reports and leveraged open-source tools to detect and exploit security vulnerabilities.</li>
+                        <li>Attended multiple in-house training sessions at IBM on popular technologies and programming languages utilized in IBMcloud such as Golang and microservices.</li>
+                        <li>Utilized my skills and experience as a valuable asset in enhancing the security posture of the IBM Public Cloud.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cognizant Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">Oct 2021 - May 2022</p>
+                    <p class="text-gray-400">8 mos</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Application Security Engineer</h4>
+                    <p class="text-purple-300 text-lg">Cognizant · Full-time</p>
+                    <p class="text-gray-400 mb-4">Bengaluru, Karnataka, India</p>
+                    <p class="text-gray-300 mb-2">Worked as Reverse Engineer and Malware analyst at Google Play Protect Team:</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Performed Reverse Engineering and Malware Analysis on 2000+ Android applications from the Android market to find out various types of malicious applications thus indirectly contributing to the protection and safety of millions of android users.</li>
+                        <li>Learned and performed Java source code analysis to find out Spyware, Trojan, Backdoor, Privilege Escalation, Ransomware, Phishing, Toll Fraud, and various other categories of malicious android apps.</li>
+                        <li>Learned to trace PII data flow from the mobile device to the external command and control servers by analysing the static Java, React-native and Cordova code as well as by performing dynamic analysis.</li>
+                        <li>Expertise in reverse engineering APK files to identify and analyze malware, as well as to understand the data that is being exfiltrated from the app.</li>
+                        <li>Proficient in utilizing various tools, including Jadx, jadx-gui, apktool, and dex2jar, to effectively decompile and analyze code.</li>
+                        <li>Learned to analyze a malicious activity that involves chaining multiple JAR files via dynamic code loading in order to evade detection by machine learning models.</li>
+                        <li>Knowledge of using tools such as Ghidra for binary disassembly and analysis of some kind of malware using string search.</li>
+                        <li>Proficient in analyzing various Android APIs from source code such as ContactsContract, content://sms, etc.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ValueMentor - Team Lead Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">Jan 2021 - Oct 2021</p>
+                    <p class="text-gray-400">10 mos</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Team Lead - Security Testing</h4>
+                    <p class="text-purple-300 text-lg">ValueMentor · Full-time</p>
+                    <p class="text-gray-400 mb-4">Infopark, Thrissur, Kerala</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Managed the cycle of project continuity, reviewed the team's technical work, and ensured the quality of service deliverables.</li>
+                        <li>Gained skill in business requirement gathering and threat modelling.</li>
+                        <li>Organized technical meetings and client meetings.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ValueMentor - Information Security Analyst Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">Aug 2019 - Oct 2021</p>
+                    <p class="text-gray-400">2 yrs 3 mos</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Information Security Analyst</h4>
+                    <p class="text-purple-300 text-lg">ValueMentor · Full-time</p>
+                    <p class="text-gray-400 mb-4">Infopark, Thrissur</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Successfully mitigated hundreds of high-risk vulnerabilities from the assets of public and private sector organisations.</li>
+                        <li>Assumed complete ownership of the projects done.</li>
+                        <li>Successfully identified vulnerabilities in hundreds of Web applications, in which a great number of vulnerabilities were safely exploited and reported with Proof of Concepts.</li>
+                        <li>Successfully identified vulnerabilities in Android and IOS applications.</li>
+                        <li>A good number of Network VAPTs performed, in which, many of the network vulnerabilities were successfully exploited with the consent of the client and reported with the proof of concept.</li>
+                        <li>Performed Source Code Reviews and Thick Client VAPTs.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tata Communications Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">Sep 2018 - Aug 2019</p>
+                    <p class="text-gray-400">1 yr</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Network Operations Center Engineer [onContract]</h4>
+                    <p class="text-purple-300 text-lg">Tata Communications</p>
+                    <p class="text-gray-400 mb-4">Kochi, Kerala, India</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Gained good knowledge in physical layer communication which helps in identifying attack vectors in a cybersecurity career.</li>
+                        <li>Worked with SEA-ME-WE3 or South-East Asia - Middle East - Western Europe 3 and The South Africa Far East or SAFE team.</li>
+                        <li>Gained knowledge about the working principles of backbone network communications and submarine telecommunications.</li>
+                        <li>Co-ordinated with international Network Operation Centers and Cable Landing Stations to resolve issues in Network infrastructure.</li>
+                        <li>Familiarized with various networking equipment and its configurations.</li>
+                        <li>Provided customer support by diagnosing network and equipment issues and implementing and coordinating technical or procedural solutions.</li>
+                        <li>Prepared system activity and performance reports.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sporthood Experience Card -->
+            <div class="flex flex-col md:flex-row bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <div class="md:w-1/4 flex-shrink-0 text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-blue-300 font-semibold text-xl">Jun 2017 - Jul 2017</p>
+                    <p class="text-gray-400">2 mos</p>
+                </div>
+                <div class="md:w-3/4">
+                    <h4 class="text-2xl font-semibold text-white">Summer Intern</h4>
+                    <p class="text-purple-300 text-lg">Sporthood · Internship</p>
+                    <p class="text-gray-400 mb-4">Bengaluru, Karnataka, India</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Developed a dashboard using the Django framework.</li>
+                        <li>Designed and implemented features to enhance the functionality of the dashboard.</li>
+                        <li>Utilized Django templates to create dynamic and responsive user interfaces.</li>
+                        <li>Integrated PostgreSQL database to store and retrieve data efficiently.</li>
+                        <li>Employed agile development methodologies to ensure timely delivery of the project.</li>
+                        <li>Collaborated with team members to troubleshoot and debug issues.</li>
+                        <li>Conducted unit and integration tests to ensure quality and performance of the dashboard.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Education</h3>
+        <div class="space-y-8">
+            <!-- Model Engineering College Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-white">Bachelor of Technology - BTech, Computer Science and Engineering</h4>
+                <p class="text-purple-300 text-lg">Model Engineering College</p>
+                <p class="text-gray-400">2015 - 2018</p>
+            </div>
+            <!-- MES Central School Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-white">CBSE</h4>
+                <p class="text-purple-300 text-lg">MES Central School, Tirur</p>
+                <p class="text-gray-400">2000 - 2012</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Licenses & Certifications Section -->
+    <section id="certs" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Licenses & Certifications</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- OSCP Certification Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-xl font-semibold text-white">OffSec Certified Professional (OSCP)</h4>
+                <p class="text-purple-300">OffSec</p>
+                <p class="text-gray-400">Issued Mar 2024</p>
+                <a href="#" class="text-blue-400 hover:underline mt-2 inline-block">Show credential</a>
+            </div>
+            <!-- IBM Cloud DevSecOps v1 Specialty Certification Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-xl font-semibold text-white">IBM Cloud DevSecOps v1 Specialty</h4>
+                <p class="text-purple-300">IBM</p>
+                <p class="text-gray-400">Issued Oct 2023</p>
+                <a href="#" class="text-blue-400 hover:underline mt-2 inline-block">Show credential</a>
+            </div>
+            <!-- Additional certifications can be added here following the same structure -->
+        </div>
+    </section>
+
+    <!-- Awards & Honors Section -->
+    <section id="awards" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Honors & Awards</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- IBM CTF Award Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-xl font-semibold text-white">Secured first place in the IBM CTF challenge - Game of Flags</h4>
+                <p class="text-purple-300">Issued by IBM PTC Team · Oct 2023</p>
+                <p class="text-gray-400">Associated with IBM</p>
+                <p class="text-gray-300 mt-2">Secured first place in the tester's CTF challenge - Game of Flags, An event organised by internal team in October as a part of the IBM cybersecurity awareness month 2023.</p>
+                <a href="#" class="text-blue-400 hover:underline mt-2 inline-block">View PDF</a>
+            </div>
+            <!-- Hack The Box Rank Award Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-xl font-semibold text-white">Rank: Hacker</h4>
+                <p class="text-purple-300">Issued by Hack The Box · Jul 2020</p>
+                <p class="text-gray-400">Hack The Box is an online platform allowing security enthusiasts to test and advance their skills in cyber security.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteering Section -->
+    <section id="volunteering" class="container mx-auto p-6 sm:p-8 my-8 sm:my-16 bg-gray-800 rounded-lg shadow-xl scroll-reveal">
+        <h3 class="text-3xl sm:text-4xl font-bold text-blue-400 mb-6 sm:mb-8 text-center">Volunteering</h3>
+        <div class="space-y-8">
+            <!-- Kerala Police Cyberdome Volunteering Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-white">Volunteer</h4>
+                <p class="text-purple-300 text-lg">Kerala Police Cyberdome</p>
+                <p class="text-gray-400">Aug 2019 - Present · 5 yrs 11 mos</p>
+                <p class="text-gray-300 mt-2">Holding hands tight with geeks and cops to build a secure Cyber Space.</p>
+            </div>
+            <!-- Ramaiah Institute Of Technology Instructor Volunteering Card -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-blue-500">
+                <h4 class="text-2xl font-semibold text-white">Instructor</h4>
+                <p class="text-purple-300 text-lg">Ramaiah Institute Of Technology</p>
+                <p class="text-gray-400">Feb 2024 · 1 mo</p>
+                <p class="text-gray-300 mt-2">Delivered practical web application penetration testing class at Ramaiah Institute of Technology as part of Faculty and Student training program.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-gray-400 p-6 text-center mt-16 rounded-t-lg shadow-inner">
+        <p class="text-lg">&copy; 2024 Faris Mohammed. All rights reserved.</p>
+        <p class="text-md">Built with passion and cybersecurity in mind.</p>
+    </footer>
+
+    <!-- JavaScript for Starfield and Scroll Reveal Animations -->
+    <script>
+        // Starfield Animation Logic
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = []; // Array to hold star objects
+        const numStars = 500; // Number of stars to display
+
+        // Function to resize canvas and re-initialize stars based on window dimensions
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars(); // Re-initialize stars to distribute them correctly across new dimensions
+        }
+
+        // Function to initialize or reset the stars array
+        function initStars() {
+            stars = []; // Clear existing stars
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, // Random X position within canvas width
+                    y: Math.random() * canvas.height, // Random Y position within canvas height
+                    radius: Math.random() * 1.5 + 0.5, // Random radius between 0.5 and 2.0
+                    color: `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`, // Random white color with varying opacity (0.2 to 1.0)
+                    velocity: Math.random() * 0.5 + 0.1 // Random velocity for movement (0.1 to 0.6)
+                });
+            }
+        }
+
+        // Function to draw all stars on the canvas
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas for redrawing
+
+            for (let i = 0; i < numStars; i++) {
+                const star = stars[i];
+
+                ctx.beginPath(); // Start a new path for drawing
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2, false); // Draw a circle (star)
+                ctx.fillStyle = star.color; // Set fill color
+                ctx.fill(); // Fill the star
+
+                // Move star to the left
+                star.x -= star.velocity;
+
+                // If a star moves off the left edge of the screen, reset its position to the right edge
+                if (star.x < 0) {
+                    star.x = canvas.width; // Reset X to the far right
+                    star.y = Math.random() * canvas.height; // Assign a new random Y position
+                }
+            }
+        }
+
+        // Animation loop for the starfield
+        function animateStars() {
+            drawStars(); // Draw current state of stars
+            requestAnimationFrame(animateStars); // Request next animation frame for smooth loop
+        }
+
+        // Scroll Reveal Animation Logic
+        const scrollRevealElements = document.querySelectorAll('.scroll-reveal'); // Select all elements with 'scroll-reveal' class
+
+        const observerOptions = {
+            root: null, // The viewport is the root
+            rootMargin: '0px', // No margin around the root
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        // Create an Intersection Observer instance
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // If the element is intersecting (visible), add 'active' class
+                    entry.target.classList.add('active');
+                } else {
+                    // Optional: If you want elements to disappear when scrolled out of view, uncomment below:
+                    // entry.target.classList.remove('active');
+                }
+            });
+        }, observerOptions);
+
+        // Observe each scroll reveal element
+        scrollRevealElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // Event Listeners: Ensure canvas is sized correctly and animations start after page load
+        window.addEventListener('load', () => {
+            resizeCanvas(); // Set initial canvas size and populate stars
+            animateStars(); // Start the starfield animation loop
+        });
+
+        // Adjust canvas size and stars on window resize to maintain responsiveness
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>
