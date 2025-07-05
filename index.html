@@ -7,36 +7,37 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        @keyframes spinAccelerate {
-            0% {
-                transform: rotate(0deg);
-                animation-timing-function: ease-in; /* Start slowly */
-            }
-            10% {
-                transform: rotate(30deg);
-                animation-timing-function: linear;
-            }
-            100% {
-                transform: rotate(1080deg); /* Spins 3 full rotations very quickly */
-                animation-timing-function: linear; /* Maintain constant fast speed */
-            }
-        }
-
-        .spin-slow-fast {
-            animation: spinAccelerate 2s infinite; /* 2s total duration for one cycle */
-            transform-origin: center center; /* Ensure it spins around its center */
-            /* Add a transition for a smoother pause/resume effect */
-            transition: animation-play-state 0.5s ease-out;
-        }
-
-        .spin-paused {
-            animation-play-state: paused;
-            /* Add a specific rotation to slowly stop from current position if needed,
-            or rely on the transition for the 'slowing down' feel.
-            For a full stop, 'paused' is generally enough, the transition helps the slowdown. */
-        }
 
 
+@keyframes spinAccelerateInitial {
+    0% {
+        transform: rotate(0deg);
+        animation-timing-function: ease-in; /* Starts slow, accelerates */
+    }
+    100% {
+
+        transform: rotate(720deg); /* Example: 2 full rotations in 5 seconds */
+        animation-timing-function: linear; /* This will be overridden by animation-fill-mode: forwards */
+    }
+}
+
+@keyframes spinContinuous {
+    /* This animation is purely for continuous, linear rotation */
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg); /* One full rotation */
+    }
+}
+
+.spin-slow-fast {
+    animation:
+        spinAccelerateInitial 5s ease-in forwards,
+        spinContinuous 1s linear infinite 5s; /* 1s here means 1 rotation every second */
+
+    transform-origin: center center; /* Ensures it spins around its center */
+}
 
         /* Define a custom green color for consistency */
         .text-accent-green {
@@ -644,49 +645,6 @@
     </footer>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const spinningSvg = document.querySelector('.spin-slow-fast');
-
-        if (spinningSvg) {
-            let animationPlayState = 'running'; // Track current state
-
-            // Function to smoothly slow down and stop
-            function slowDownAndStop() {
-                spinningSvg.style.transition = 'transform 0.5s ease-out, animation-play-state 0.5s ease-out'; // Short transition for slowing
-                // Get current rotation to stop it smoothly
-                const st = window.getComputedStyle(spinningSvg, null);
-                const tr = st.getPropertyValue('transform');
-
-                let angle = 0;
-                if (tr !== 'none') {
-                    const values = tr.split('(')[1].split(')')[0].split(',');
-                    const a = values[0];
-                    const b = values[1];
-                    angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
-                }
-                spinningSvg.style.transform = `rotate(${angle}deg)`; // Lock current rotation
-                spinningSvg.classList.add('spin-paused');
-                animationPlayState = 'paused';
-            }
-
-            // Function to resume spinning
-            function resumeSpin() {
-                spinningSvg.style.transition = 'transform 0s, animation-play-state 0.5s ease-in'; // Reset transform transition, animate play state
-                spinningSvg.classList.remove('spin-paused');
-                // Remove the inline transform style to let animation take over again
-                spinningSvg.style.transform = '';
-                animationPlayState = 'running';
-            }
-
-            spinningSvg.addEventListener('mouseenter', slowDownAndStop);
-            spinningSvg.addEventListener('mouseleave', resumeSpin);
-        }
-    });
-
-
-
-
-
 
         // Scroll Reveal Animation
         const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
@@ -794,7 +752,7 @@
         const hexCharacters = "0123456789ABCDEF";
         const minFontSize = 20; // Larger font size for fewer characters
         const maxFontSize = 30;
-        const hexFallSpeed = 0.5; // Slower fall speed
+        const hexFallSpeed = 6; // Slower fall speed
 
         const fallingHexes = [];
 
@@ -850,6 +808,7 @@
                 hexCtx.rotate(hex.rotation); // Apply rotation
 
                 hexCtx.fillStyle = `rgba(255, 0, 0, ${Math.max(0.1, 1 - (hex.y / hexCanvas.height))})`; // Now it's Red with fading
+                // hexCtx.fillStyle = `rgba(255, 0, 0, 0.4)`;
                 hexCtx.font = `${hex.fontSize}px monospace`;
                 hexCtx.textAlign = 'center';
                 hexCtx.textBaseline = 'middle';
