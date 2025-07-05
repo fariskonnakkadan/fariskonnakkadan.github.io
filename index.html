@@ -749,10 +749,10 @@
         hexCanvas.width = window.innerWidth;
         hexCanvas.height = window.innerHeight;
 
-        const hexCharacters = "0123456789ABCDEF";
+        const hexCharacters = "WXY0#";
         const minFontSize = 20; // Larger font size for fewer characters
         const maxFontSize = 30;
-        const hexFallSpeed = 6; // Slower fall speed
+        const hexFallSpeed = 10; // Slower fall speed
 
         const fallingHexes = [];
 
@@ -807,7 +807,7 @@
                 hexCtx.translate(hex.x, hex.y); // Move to the hex position
                 hexCtx.rotate(hex.rotation); // Apply rotation
 
-                hexCtx.fillStyle = `rgba(255, 0, 0, ${Math.max(0.1, 1 - (hex.y / hexCanvas.height))})`; // Now it's Red with fading
+                hexCtx.fillStyle = `rgba(140, 0, 0, ${Math.max(0.1, 1 - (hex.y / hexCanvas.height))})`; // Now it's Red with fading
                 // hexCtx.fillStyle = `rgba(255, 0, 0, 0.4)`;
                 hexCtx.font = `${hex.fontSize}px monospace`;
                 hexCtx.textAlign = 'center';
