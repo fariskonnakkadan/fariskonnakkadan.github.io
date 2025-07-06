@@ -41,22 +41,25 @@
 
         /* Define a custom green color for consistency */
         .text-accent-green {
-            color: #00FF7F; /* Electric Green */
+            color: #ff0000; /* Electric Green */
         }
         .bg-accent-green-dark {
-            background-color: #00BF6F; /* Slightly darker green for buttons/hovers */
+            background-color: #910303; /* Slightly darker green for buttons/hovers */
         }
         .border-accent-green {
-            border-color: #00FF7F;
+            border-color: #ff0000;
+        }
+         .hover\:border-accent-green:hover {
+            border-color: #ff0000;
         }
         .hover\:text-accent-green:hover {
-            color: #00FF7F;
+            color: #ff0000;
         }
         .hover\:bg-accent-green-dark:hover {
-            background-color: #00BF6F;
+            background-color: #bf0000;
         }
         .focus\:border-accent-green:focus {
-            border-color: #00FF7F;
+            border-color: #ff0000;
         }
 
         /* Apply Inter font to the entire body */
@@ -98,12 +101,12 @@
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #00FF7F; /* Electric green thumb */
+            background: #ff0000; /* Electric green thumb */
             border-radius: 10px;
             border: 3px solid #2d3748; /* Border matching track for smooth appearance */
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #00BF6F; /* Slightly darker green on hover */
+            background: #be0000; /* Slightly darker green on hover */
         }
 
         /* Custom styles for the Cyber Puzzle */
@@ -116,7 +119,7 @@
             transition: border-color 0.3s ease;
         }
         #puzzle-container:hover {
-            border-color: #00FF7F; /* Electric green on hover */
+            border-color: #ff0000; /* Electric green on hover */
         }
         #puzzle-input-container {
             display: none;
@@ -161,7 +164,7 @@
             font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
         }
         #terminal-send-btn {
-            background-color: #00FF7F; /* Electric green */
+            background-color: #ff0000; /* Electric green */
             color: black; /* Black text for contrast */
             padding: 0.5rem 1rem;
             border-radius: 0.25rem;
@@ -170,7 +173,7 @@
             transition: background-color 0.3s ease;
         }
         #terminal-send-btn:hover {
-            background-color: #00BF6F; /* Slightly darker green on hover */
+            background-color: #900000; /* Slightly darker green on hover */
         }
     </style>
 </head>
@@ -240,8 +243,8 @@
             <p class="text-gray-300 mb-4">
                 Simulate a basic command-line interface. Try commands like <code class="bg-gray-900 p-1 rounded">help</code>, <code class="bg-gray-900 p-1 rounded">whoami</code>, or <code class="bg-gray-900 p-1 rounded">skills</code>.
             </p>
-            <div id="terminal-output">
-                Welcome to the Faris Mohammed CLI. Type 'help' to get started.
+            <div id="terminal-output">Welcome to the Faris Mohammed CLI. Type 'help' to get started.
+
             </div>
             <div id="terminal-input-container">
                 <span class="text-accent-green pr-2">user@faris-portfolio:~$</span>
@@ -700,13 +703,8 @@
             - whoami: Get details about Faris Mohammed.
             - skills: List key skills and expertise.
             - clear: Clears the terminal output.`,
-            'whoami': `Name: Faris Mohammed
-            Role: Offensive Security Engineer
-            Specialization: Web, API, Network, Mobile, Thickclient Penetration Testing
-            Currently at: IBM ISL (Cloud Red Team)`,
-            'skills': `Top Skills: Python, Vulnerability Assessment, Penetration Testing, Burp Suite, Kali Linux.
-            Core Expertise: IBM Public Cloud Security, Web/API/Network/Mobile/Thick Client Security, Android Reverse Engineering.
-            Certifications: OSCP, CEH, CRTP.`,
+            'whoami': `Name: Faris Mohammed\nRole: Offensive Security Engineer\nSpecialization: Web, API, Network, Mobile, Thickclient Penetration Testing\nCurrently at: IBM ISL (Cloud Red Team)`,
+            'skills': `Top Skills: Python, Vulnerability Assessment, Penetration Testing, Burp Suite, Kali Linux.\nCore Expertise: IBM Public Cloud Security, Web/API/Network/Mobile/Thick Client Security, Android Reverse Engineering.\nCertifications: OSCP, CEH, CRTP.`,
             'clear': ''
         };
 
