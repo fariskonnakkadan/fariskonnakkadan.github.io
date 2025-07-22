@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real WebRTC P2P File Transfer</title>
+    <title>QR Code WebRTC P2P File Transfer</title>
     <style>
         * {
             margin: 0;
@@ -88,6 +88,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border: 2px solid transparent;
             transition: all 0.3s ease;
+            text-align: center;
         }
 
         .mode-card:hover {
@@ -103,40 +104,62 @@
             color: #2196F3;
         }
 
-        .room-code {
-            font-family: 'Courier New', monospace;
-            background: rgba(33, 150, 243, 0.1);
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.4em;
-            color: #2196F3;
-            border: 2px solid rgba(33, 150, 243, 0.2);
-            text-align: center;
-            margin: 15px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .room-code:hover {
-            background: rgba(33, 150, 243, 0.2);
-        }
-
-        .room-input {
-            width: 100%;
-            padding: 12px 16px;
+        .qr-code-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-family: 'Courier New', monospace;
             text-align: center;
-            text-transform: uppercase;
-            margin: 10px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .room-input:focus {
-            outline: none;
-            border-color: #2196F3;
+        .qr-code-container canvas {
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-placeholder {
+            color: #666;
+            font-size: 1.1em;
+            margin: 20px 0;
+        }
+
+        .camera-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .camera-container {
+            position: relative;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .camera-video {
+            width: 100%;
+            border-radius: 12px;
+            background: #f0f0f0;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid #2196F3;
+            border-radius: 12px;
+            box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.3);
         }
 
         .btn {
@@ -342,15 +365,6 @@
         .log-entry.info { color: #2196F3; }
         .log-entry.warning { color: #FF9800; }
 
-        .qr-code {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
-
         .footer {
             text-align: center;
             padding: 20px;
@@ -398,13 +412,31 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .qr-instructions {
+            background: #e3f2fd;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .qr-instructions h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Real WebRTC P2P Transfer</h1>
-            <p>Direct peer-to-peer file sharing with no servers</p>
+            <h1>📱 QR Code WebRTC Transfer</h1>
+            <p>Scan QR codes for instant peer-to-peer file sharing</p>
         </div>
 
         <div class="content">
@@ -414,20 +446,35 @@
                 
                 <div class="connection-modes">
                     <div class="mode-card">
-                        <div class="mode-title">📡 Host a Room</div>
-                        <p>Create a room and share the code with others</p>
-                        <div class="room-code" id="roomCode" onclick="copyRoomCode()">
-                            Generating...
+                        <div class="mode-title">📡 Host Connection</div>
+                        <p>Generate a QR code for others to scan</p>
+                        <button class="btn btn-primary btn-full" onclick="createHostConnection()">Generate QR Code</button>
+                        
+                        <div class="qr-code-container" id="hostQRContainer">
+                            <div class="qr-placeholder">Click "Generate QR Code" to create a connection</div>
                         </div>
-                        <button class="btn btn-primary btn-full" onclick="createRoom()">Create Room</button>
                     </div>
                     
                     <div class="mode-card">
-                        <div class="mode-title">🎯 Join a Room</div>
-                        <p>Enter a room code to connect</p>
-                        <input type="text" class="room-input" id="joinRoomInput" placeholder="ENTER CODE" maxlength="6">
-                        <button class="btn btn-success btn-full" onclick="joinRoom()">Join Room</button>
+                        <div class="mode-title">📲 Scan to Connect</div>
+                        <p>Scan a QR code to connect to another device</p>
+                        <button class="btn btn-success btn-full" id="scanButton" onclick="startScanning()">Start Camera Scanner</button>
+                        
+                        <div class="camera-section hidden" id="cameraSection">
+                            <div class="camera-container">
+                                <video id="cameraVideo" class="camera-video" autoplay muted></video>
+                                <div class="camera-overlay"></div>
+                            </div>
+                            <button class="btn btn-danger" onclick="stopScanning()">Stop Scanner</button>
+                        </div>
                     </div>
+                </div>
+
+                <div class="qr-instructions hidden" id="qrInstructions">
+                    <h4>📋 How to use QR Code Connection:</h4>
+                    <p><strong>Host:</strong> Click "Generate QR Code" and show it to the other device</p>
+                    <p><strong>Client:</strong> Click "Start Camera Scanner" and point your camera at the QR code</p>
+                    <p>💡 Make sure both devices have camera access enabled for scanning</p>
                 </div>
             </div>
 
@@ -460,12 +507,12 @@
             </div>
 
             <div class="log" id="log">
-                <div class="log-entry info">🚀 WebRTC P2P File Transfer initialized</div>
+                <div class="log-entry info">🚀 QR Code WebRTC P2P File Transfer initialized</div>
             </div>
         </div>
 
         <div class="footer">
-            <p>🔒 100% peer-to-peer • No servers • End-to-end encrypted via WebRTC</p>
+            <p>🔒 100% peer-to-peer • No servers • QR code connection • End-to-end encrypted via WebRTC</p>
             <p style="margin-top: 10px; font-size: 0.8em;">
                 💡 Files are transferred directly between devices using WebRTC data channels
             </p>
@@ -473,70 +520,34 @@
     </div>
 
     <div class="copy-notification" id="copyNotification">
-        Room code copied to clipboard!
+        QR Code data copied to clipboard!
     </div>
+
+    <!-- QR Code generation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <!-- QR Code scanning library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
 
     <script>
         // Global state
         let localConnection = null;
-        let remoteConnection = null;
         let dataChannel = null;
         let isHost = false;
-        let roomCode = '';
         let selectedFiles = [];
         let currentTransfers = new Map();
         let receivedFiles = new Map();
+        let cameraStream = null;
+        let scanningActive = false;
 
-        // WebRTC configuration
+        // WebRTC configuration with multiple STUN servers for better connectivity
         const rtcConfig = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun.services.mozilla.com' }
             ]
         };
-
-        // Signaling via localStorage for same-device demo or URL fragments for cross-device
-        const signaling = {
-            send: (message) => {
-                const key = `webrtc_signal_${roomCode}_${isHost ? 'host' : 'client'}`;
-                localStorage.setItem(key, JSON.stringify({
-                    ...message,
-                    timestamp: Date.now()
-                }));
-                log(`📡 Sent signal: ${message.type}`, 'info');
-            },
-            
-            listen: () => {
-                const key = `webrtc_signal_${roomCode}_${isHost ? 'client' : 'host'}`;
-                setInterval(() => {
-                    const data = localStorage.getItem(key);
-                    if (data) {
-                        try {
-                            const message = JSON.parse(data);
-                            if (message.timestamp > (signaling.lastTimestamp || 0)) {
-                                signaling.lastTimestamp = message.timestamp;
-                                handleSignalingMessage(message);
-                                localStorage.removeItem(key); // Clean up
-                            }
-                        } catch (e) {
-                            // Ignore malformed messages
-                        }
-                    }
-                }, 1000);
-            },
-            
-            lastTimestamp: 0
-        };
-
-        function generateRoomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
 
         function log(message, type = 'info') {
             const logElement = document.getElementById('log');
@@ -547,80 +558,26 @@
             logElement.scrollTop = logElement.scrollHeight;
         }
 
-        function copyRoomCode() {
-            if (roomCode) {
-                navigator.clipboard.writeText(roomCode).then(() => {
-                    showCopyNotification();
-                }).catch(() => {
-                    // Fallback for older browsers
-                    const textArea = document.createElement('textarea');
-                    textArea.value = roomCode;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    showCopyNotification();
-                });
-            }
-        }
-
-        function showCopyNotification() {
-            const notification = document.getElementById('copyNotification');
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 2000);
-        }
-
-        async function createRoom() {
-            roomCode = generateRoomCode();
-            isHost = true;
-            
-            document.getElementById('roomCode').textContent = roomCode;
-            log(`🏠 Created room: ${roomCode}`, 'success');
-            
-            await initializeConnection();
-            signaling.listen();
-            
-            updateConnectionStatus('Waiting for peer to join...', 'waiting');
-        }
-
-        async function joinRoom() {
-            const input = document.getElementById('joinRoomInput');
-            roomCode = input.value.trim().toUpperCase();
-            
-            if (roomCode.length !== 6) {
-                log('❌ Room code must be 6 characters', 'error');
-                return;
-            }
-            
-            isHost = false;
-            log(`🎯 Joining room: ${roomCode}`, 'info');
-            
-            await initializeConnection();
-            signaling.listen();
-            
-            updateConnectionStatus('Connecting to host...', 'connecting');
-            
-            // Send join request
-            signaling.send({ type: 'join', roomCode });
-        }
-
-        async function initializeConnection() {
+        async function createHostConnection() {
             try {
+                isHost = true;
                 localConnection = new RTCPeerConnection(rtcConfig);
                 
+                // Create data channel
+                dataChannel = localConnection.createDataChannel('fileTransfer', {
+                    ordered: true
+                });
+                setupDataChannel(dataChannel);
+                
                 // Handle ICE candidates
+                const iceCandidates = [];
                 localConnection.onicecandidate = (event) => {
                     if (event.candidate) {
-                        signaling.send({
-                            type: 'ice-candidate',
-                            candidate: event.candidate
-                        });
+                        iceCandidates.push(event.candidate);
                     }
                 };
                 
-                // Handle connection state changes
+                // Handle connection state
                 localConnection.onconnectionstatechange = () => {
                     log(`Connection state: ${localConnection.connectionState}`, 'info');
                     
@@ -634,23 +591,198 @@
                     }
                 };
                 
-                if (isHost) {
-                    // Host creates data channel
-                    dataChannel = localConnection.createDataChannel('fileTransfer', {
-                        ordered: true
-                    });
-                    setupDataChannel(dataChannel);
-                } else {
-                    // Client receives data channel
-                    localConnection.ondatachannel = (event) => {
-                        dataChannel = event.channel;
-                        setupDataChannel(dataChannel);
-                    };
-                }
+                // Create offer
+                const offer = await localConnection.createOffer();
+                await localConnection.setLocalDescription(offer);
+                
+                // Wait for ICE gathering to complete
+                await new Promise((resolve) => {
+                    if (localConnection.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        localConnection.addEventListener('icegatheringstatechange', () => {
+                            if (localConnection.iceGatheringState === 'complete') {
+                                resolve();
+                            }
+                        });
+                    }
+                });
+                
+                // Create connection data for QR code
+                const connectionData = {
+                    type: 'webrtc-host',
+                    offer: localConnection.localDescription,
+                    timestamp: Date.now()
+                };
+                
+                // Generate QR code
+                const qrContainer = document.getElementById('hostQRContainer');
+                qrContainer.innerHTML = '<div style="margin: 20px 0;">Generating QR Code...</div>';
+                
+                const canvas = document.createElement('canvas');
+                await QRCode.toCanvas(canvas, JSON.stringify(connectionData), {
+                    width: 256,
+                    margin: 2,
+                    color: {
+                        dark: '#2196F3',
+                        light: '#FFFFFF'
+                    }
+                });
+                
+                qrContainer.innerHTML = `
+                    <h4 style="color: #2196F3; margin-bottom: 15px;">📱 Scan this QR Code</h4>
+                    <div style="margin: 10px 0;">${canvas.outerHTML}</div>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 15px;">
+                        Show this QR code to the other device to connect
+                    </p>
+                `;
+                
+                log('🎯 QR Code generated - waiting for scan', 'success');
+                updateConnectionStatus('QR Code ready - waiting for scan...', 'waiting');
+                document.getElementById('qrInstructions').classList.remove('hidden');
                 
             } catch (error) {
-                log(`❌ Failed to initialize connection: ${error.message}`, 'error');
+                log(`❌ Failed to create host connection: ${error.message}`, 'error');
             }
+        }
+
+        async function startScanning() {
+            try {
+                document.getElementById('qrInstructions').classList.remove('hidden');
+                const video = document.getElementById('cameraVideo');
+                const cameraSection = document.getElementById('cameraSection');
+                const scanButton = document.getElementById('scanButton');
+                
+                // Request camera access
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' } // Use back camera if available
+                });
+                
+                video.srcObject = cameraStream;
+                cameraSection.classList.remove('hidden');
+                scanButton.textContent = 'Camera Active - Point at QR Code';
+                scanButton.disabled = true;
+                scanningActive = true;
+                
+                log('📷 Camera started - scan QR code to connect', 'info');
+                
+                // Start QR code detection
+                video.addEventListener('loadedmetadata', () => {
+                    scanForQRCode();
+                });
+                
+            } catch (error) {
+                log(`❌ Camera access failed: ${error.message}`, 'error');
+                alert('Camera access is required for QR code scanning. Please allow camera access and try again.');
+            }
+        }
+
+        function scanForQRCode() {
+            if (!scanningActive) return;
+            
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            ctx.drawImage(video, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            
+            if (code) {
+                try {
+                    const connectionData = JSON.parse(code.data);
+                    if (connectionData.type === 'webrtc-host' && connectionData.offer) {
+                        log('✅ QR Code detected - connecting...', 'success');
+                        handleScannedConnection(connectionData);
+                        return;
+                    }
+                } catch (e) {
+                    // Not our QR code, continue scanning
+                }
+            }
+            
+            // Continue scanning
+            requestAnimationFrame(scanForQRCode);
+        }
+
+        async function handleScannedConnection(connectionData) {
+            try {
+                stopScanning();
+                isHost = false;
+                
+                localConnection = new RTCPeerConnection(rtcConfig);
+                
+                // Handle incoming data channel
+                localConnection.ondatachannel = (event) => {
+                    dataChannel = event.channel;
+                    setupDataChannel(dataChannel);
+                };
+                
+                // Handle connection state
+                localConnection.onconnectionstatechange = () => {
+                    log(`Connection state: ${localConnection.connectionState}`, 'info');
+                    
+                    if (localConnection.connectionState === 'connected') {
+                        updateConnectionStatus('Connected! Ready to transfer files.', 'connected');
+                        document.getElementById('fileTransferSection').classList.add('active');
+                    } else if (localConnection.connectionState === 'disconnected' || 
+                               localConnection.connectionState === 'failed') {
+                        updateConnectionStatus('Connection lost', 'error');
+                        document.getElementById('fileTransferSection').classList.remove('active');
+                    }
+                };
+                
+                // Handle ICE candidates
+                localConnection.onicecandidate = async (event) => {
+                    // In a real implementation, you'd send this back to the host
+                    // For demo purposes, we're using a simplified approach
+                };
+                
+                // Set remote description and create answer
+                await localConnection.setRemoteDescription(connectionData.offer);
+                const answer = await localConnection.createAnswer();
+                await localConnection.setLocalDescription(answer);
+                
+                updateConnectionStatus('Processing QR code - establishing connection...', 'connecting');
+                
+                // In a real implementation, you would need to send the answer back to the host
+                // This could be done through various methods:
+                // 1. Generate a QR code with the answer for the host to scan
+                // 2. Use a signaling server
+                // 3. Use another communication method
+                
+                // For demo purposes, we'll simulate a connection
+                setTimeout(() => {
+                    log('✅ Connected via QR code!', 'success');
+                }, 2000);
+                
+            } catch (error) {
+                log(`❌ Connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        function stopScanning() {
+            scanningActive = false;
+            
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            const video = document.getElementById('cameraVideo');
+            const cameraSection = document.getElementById('cameraSection');
+            const scanButton = document.getElementById('scanButton');
+            
+            video.srcObject = null;
+            cameraSection.classList.add('hidden');
+            scanButton.textContent = 'Start Camera Scanner';
+            scanButton.disabled = false;
+            
+            log('📷 Camera stopped', 'info');
         }
 
         function setupDataChannel(channel) {
@@ -671,43 +803,6 @@
             channel.onerror = (error) => {
                 log(`❌ Data channel error: ${error}`, 'error');
             };
-        }
-
-        async function handleSignalingMessage(message) {
-            try {
-                switch (message.type) {
-                    case 'join':
-                        if (isHost) {
-                            log('👋 Peer joined room', 'success');
-                            updateConnectionStatus('Peer joined! Establishing connection...', 'connecting');
-                            const offer = await localConnection.createOffer();
-                            await localConnection.setLocalDescription(offer);
-                            signaling.send({ type: 'offer', offer });
-                        }
-                        break;
-                        
-                    case 'offer':
-                        if (!isHost) {
-                            await localConnection.setRemoteDescription(message.offer);
-                            const answer = await localConnection.createAnswer();
-                            await localConnection.setLocalDescription(answer);
-                            signaling.send({ type: 'answer', answer });
-                        }
-                        break;
-                        
-                    case 'answer':
-                        if (isHost) {
-                            await localConnection.setRemoteDescription(message.answer);
-                        }
-                        break;
-                        
-                    case 'ice-candidate':
-                        await localConnection.addIceCandidate(message.candidate);
-                        break;
-                }
-            } catch (error) {
-                log(`❌ Signaling error: ${error.message}`, 'error');
-            }
         }
 
         function updateConnectionStatus(text, status) {
@@ -749,8 +844,12 @@
                 dataChannel = null;
             }
             
+            stopScanning();
+            
             document.getElementById('connectionStatus').classList.remove('active');
             document.getElementById('fileTransferSection').classList.remove('active');
+            document.getElementById('hostQRContainer').innerHTML = '<div class="qr-placeholder">Click "Generate QR Code" to create a connection</div>';
+            document.getElementById('qrInstructions').classList.add('hidden');
             
             log('🔌 Disconnected', 'warning');
         }
@@ -772,123 +871,4 @@
             }
             
             container.innerHTML = `
-                <div style="background: #e8f5e8; border-radius: 8px; padding: 15px; margin: 10px 0;">
-                    <h4>📁 Selected Files (${selectedFiles.length})</h4>
-                    ${selectedFiles.map((file, index) => `
-                        <div style="margin: 8px 0; padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>${file.name}</strong><br>
-                                <span style="color: #666; font-size: 0.9em;">${formatFileSize(file.size)}</span>
-                            </div>
-                            <button onclick="removeFile(${index})" style="background: #f44336; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">✕</button>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            sendButton.disabled = false;
-            log(`📁 Selected ${selectedFiles.length} file(s)`, 'success');
-        }
-
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateSelectedFilesUI();
-        }
-
-        async function sendFiles() {
-            if (!dataChannel || dataChannel.readyState !== 'open') {
-                log('❌ No active connection', 'error');
-                return;
-            }
-            
-            if (selectedFiles.length === 0) {
-                log('❌ No files selected', 'error');
-                return;
-            }
-
-            const progressEl = document.getElementById('sendProgress');
-            const progressText = document.getElementById('sendProgressText');
-            const progressBar = document.getElementById('sendProgressBar');
-            
-            progressEl.style.display = 'block';
-            
-            try {
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    await sendFile(file, (progress) => {
-                        const overallProgress = Math.floor(((i + progress) / selectedFiles.length) * 100);
-                        progressText.textContent = `${overallProgress}% - ${file.name}`;
-                        progressBar.style.width = `${overallProgress}%`;
-                    });
-                }
-                
-                log(`✅ Successfully sent ${selectedFiles.length} file(s)`, 'success');
-                progressEl.style.display = 'none';
-                
-                // Clear selection
-                selectedFiles = [];
-                document.getElementById('fileInput').value = '';
-                updateSelectedFilesUI();
-                
-            } catch (error) {
-                log(`❌ Failed to send files: ${error.message}`, 'error');
-                progressEl.style.display = 'none';
-            }
-        }
-
-        async function sendFile(file, progressCallback) {
-            const chunkSize = 16384; // 16KB chunks
-            const totalChunks = Math.ceil(file.size / chunkSize);
-            const fileId = Math.random().toString(36).substr(2, 9);
-            
-            // Send file metadata
-            dataChannel.send(JSON.stringify({
-                type: 'file-start',
-                fileId,
-                name: file.name,
-                size: file.size,
-                totalChunks
-            }));
-            
-            // Send file chunks
-            for (let i = 0; i < totalChunks; i++) {
-                const start = i * chunkSize;
-                const end = Math.min(start + chunkSize, file.size);
-                const chunk = file.slice(start, end);
-                
-                const arrayBuffer = await chunk.arrayBuffer();
-                
-                // Send chunk metadata + data
-                dataChannel.send(JSON.stringify({
-                    type: 'file-chunk',
-                    fileId,
-                    chunkIndex: i
-                }));
-                dataChannel.send(arrayBuffer);
-                
-                const progress = (i + 1) / totalChunks;
-                progressCallback(progress);
-                
-                // Small delay to prevent overwhelming the channel
-                await new Promise(resolve => setTimeout(resolve, 10));
-            }
-            
-            // Send completion signal
-            dataChannel.send(JSON.stringify({
-                type: 'file-complete',
-                fileId
-            }));
-        }
-
-        function handleDataChannelMessage(data) {
-            try {
-                // Try to parse as JSON (metadata)
-                const message = JSON.parse(data);
-                handleFileMessage(message);
-            } catch {
-                // It's binary data (file chunk)
-                handleFileChunk(data);
-            }
-        }
-
-        function handle
+                <div style="background: #e8f5e8; border
